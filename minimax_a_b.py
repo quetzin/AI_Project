@@ -1,28 +1,25 @@
-# Define your evaluation function STATIC here for the game state.
 def STATIC(position, player):
-    # Implement your evaluation function here.
+    # evaluation function
     pass
 
-# Define your MOVE-GEN function for generating possible moves.
-def MOVE_GEN(position, player):
-    # Implement MOVE-GEN function here. setting a successor
-    pass
+def MOVE_GEN(position, player): 
+    # generate leaf nodes
+    return successors
 
-# Define OPPOSITE function to switch between players.
-def OPPOSITE(player):
+def OPPOSITE(player): #may need to change depending on the system of the game
     if player == "max":
         player = "min"
     else:
         player = "max"
     pass
 
-class SearchResult:
+class SearchResult: #This function may not be needed
     def __init__(self, value, path):
         self.value = value
         self.path = path
 
 def DEEP_ENOUGH(position, depth):
-        return  position == depth   #return true if it is deep enough
+        return  position == depth   #return true if it reaches to the depth limit
 
 def MINIMAX_AB(position, depth, player, passThresh, useThresh):
     if DEEP_ENOUGH(position, depth):
@@ -30,12 +27,12 @@ def MINIMAX_AB(position, depth, player, passThresh, useThresh):
 
     successors = MOVE_GEN(position, player)
 
-    if not successors:
+    if not successors: #when it reaches to the terminal node
         return SearchResult(STATIC(position, player), [])
 
     value = float('-inf')
     path = []
-    for succ in successors:
+    for succ in successors: #go through each leaf node
         resultSucc = MINIMAX_AB(succ, depth + 1, OPPOSITE(player), -passThresh, -useThresh)
         newValue = -resultSucc.value
 
