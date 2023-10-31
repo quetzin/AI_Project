@@ -5,12 +5,15 @@ def STATIC(position, player):
 
 # Define your MOVE-GEN function for generating possible moves.
 def MOVE_GEN(position, player):
-    # Implement MOVE-GEN function here.
+    # Implement MOVE-GEN function here. setting a successor
     pass
 
 # Define OPPOSITE function to switch between players.
 def OPPOSITE(player):
-    # Implement OPPOSITE function here.
+    if player == "max":
+        player = "min"
+    else:
+        player = "max"
     pass
 
 class SearchResult:
@@ -19,12 +22,11 @@ class SearchResult:
         self.path = path
 
 def DEEP_ENOUGH(position, depth):
-    # Implement DEEP_ENOUGH function here.
-    return depth == 0  # Change this condition as needed.
+        return  position == depth   #return true if it is deep enough
 
 def MINIMAX_AB(position, depth, player, passThresh, useThresh):
     if DEEP_ENOUGH(position, depth):
-        return SearchResult(STATIC(position, player), [])
+        return SearchResult(STATIC(position, player), []) 
 
     successors = MOVE_GEN(position, player)
 
