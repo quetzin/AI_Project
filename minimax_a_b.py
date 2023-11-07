@@ -1,9 +1,15 @@
+depthLimit = 2
 def STATIC(position, player):
     # evaluation function
     pass
 
 def MOVE_GEN(position, player): 
-    # generate leaf nodes
+    successors = []
+    for row in range(6):
+        for col in range(7):
+            if position[row][col] == " ":
+                position = modifyArray(position, player)
+                successors.append(position)       
     return successors
 
 def OPPOSITE(player): #may need to change depending on the system of the game
@@ -19,19 +25,19 @@ class SearchResult: #This function may not be needed
         self.path = path
 
 def DEEP_ENOUGH(position, depth):
-        return  position == depth   #return true if it reaches to the depth limit
+        return  depth == depthLimit   #return true if it reaches to the depth limit
 
 def MINIMAX_AB(position, depth, player, passThresh, useThresh):
     if DEEP_ENOUGH(position, depth):
-        return SearchResult(STATIC(position, player), []) 
-
-    successors = MOVE_GEN(position, player)
-
-    if not successors: #when it reaches to the terminal node
-        return SearchResult(STATIC(position, player), [])
+        value = STATIC(position, player)
+        path = []
+    else:
+        successors = MOVE_GEN(position, player) #list of bourd pattern
+        if not successors: #when it reaches to the terminal node
+            value = STATIC(position, player)
+            path = []
 
     value = float('-inf')
-    path = []
     for succ in successors: #go through each leaf node
         resultSucc = MINIMAX_AB(succ, depth + 1, OPPOSITE(player), -passThresh, -useThresh)
         newValue = -resultSucc.value
