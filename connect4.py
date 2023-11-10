@@ -18,8 +18,8 @@ def printGameBoard():
             print(" " + gameBoard[x][y] + "  |", end="")
     print("\n   +----+----+----+----+----+----+----+")
 
-def modifyArray(spacePicked, turn):
-    gameBoard[spacePicked[0]][spacePicked[1]] = turn
+def modifyArray(position, spacePicked, turn):
+    position[spacePicked[0]][spacePicked[1]] = turn
 
 def checkForWinner(chip):
     for x in range(rows):
@@ -76,7 +76,7 @@ while not leaveLoop:
             coordinate = coordinateParser(spacePicked)
             if coordinate is not None:
                 if isSpaceAvailable(coordinate) and gravityChecker(coordinate):
-                    modifyArray(coordinate, '🔵')
+                    modifyArray(gameBoard,coordinate, '🔵')
                     break
                 else:
                     print("Not a valid spot on the board. Please try again.")
@@ -86,7 +86,7 @@ while not leaveLoop:
             row = random.randint(0, 5)
             cpuChoice = (row, possibleLetters.index(col))
             if isSpaceAvailable(cpuChoice) and gravityChecker(cpuChoice):
-                modifyArray(cpuChoice, '🔴')
+                modifyArray(gameBoard,cpuChoice, '🔴')
                 break
     turnCounter += 1
     winner = checkForWinner('🔵' if turnCounter % 2 == 0 else '🔴')

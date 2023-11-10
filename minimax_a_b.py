@@ -19,10 +19,6 @@ def OPPOSITE(player): #may need to change depending on the system of the game
         player = "max"
     pass
 
-class SearchResult: #This function may not be needed
-    def __init__(self, value, path):
-        self.value = value
-        self.path = path
 
 def DEEP_ENOUGH(position, depth):
         return  depth == depthLimit   #return true if it reaches to the depth limit
@@ -48,11 +44,16 @@ def MINIMAX_AB(position, depth, player, passThresh, useThresh):
             path.insert(0, succ)
 
         if passThresh >= useThresh:
-            return SearchResult(passThresh, path)
+            value= passThresh
+            bestPath= path
+
 
         if newValue > value:
             value = newValue
             path = resultSucc.path.copy()
             path.insert(0, succ)
 
-    return SearchResult(passThresh, path)
+
+    value= passThresh
+    path= bestPath
+    return value, path
