@@ -1,4 +1,3 @@
-depthLimit = 2
 def STATIC(position, player):
     # evaluation function
     pass
@@ -34,16 +33,15 @@ def MINIMAX_AB(position, depth, player, passThresh, useThresh):
     if not successors:
         return value, path
     
-    if player == "max":
-        for succ in successors:
-            result_succ = MINIMAX_AB(succ, depth + 1, OPPOSITE(player), -passThresh, -useThresh)
-            new_value = -result_succ[0]
-            
-            if new_value > passThresh:
-                pass_thresh = new_value
-                best_path = [succ] + result_succ[1]
-            
-            if passThresh >= useThresh:
-                return pass_thresh, best_path
-    
-    return pass_thresh, best_path
+    for succ in successors:
+        result_succ = MINIMAX_AB(succ, depth + 1, OPPOSITE(player), -passThresh, -useThresh)
+        new_value = -result_succ[0]
+        
+        if new_value > passThresh:
+            passThresh = new_value
+            best_path = [succ] + result_succ[1]
+        
+        if passThresh >= useThresh:
+            return passThresh, best_path
+
+    return passThresh, best_path 
