@@ -57,6 +57,11 @@ def coordinateParser(inputString):
         print("Invalid")
         return None
 
+def createSpacePicked(row, col):
+    n = possibleLetters[col]
+    inputString = [n, int(row)]
+    return inputString
+
 def isSpaceAvailable(intendedCoordinate):
     row, col = intendedCoordinate
     return gameBoard[row][col] == " "
