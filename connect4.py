@@ -173,43 +173,43 @@ def static(position, player):
                     score -= 100
 
     # Check for potential winning positions
-    for row in range(6):
-        for col in range(4):
+    for row in range(rows):
+        for col in range(cols-3):
             if position[row][col] == position[row][col+1] == position[row][col+2] == "🔵":
                 score += 10
             elif position[row][col] == position[row][col+1] == position[row][col+2] == "🔴":
                 score -= 10
 
-    for col in range(7):
-        for row in range(3):
+    for col in range(cols):
+        for row in range(rows-3):
             if position[row][col] == position[row+1][col] == position[row+2][col] == "🔵":
                 score += 10
             elif position[row][col] == position[row+1][col] == position[row+2][col] == "🔴":
                 score -= 10
 
-    for row in range(3):
-        for col in range(4):
+    for row in range(rows-3):
+        for col in range(cols-3):
             if position[row][col] == position[row+1][col+1] == position[row+2][col+2] == "🔵":
                 score += 10
             elif position[row][col] == position[row+1][col+1] == position[row+2][col+2] == "🔴":
                 score -= 10
 
-    for row in range(3, 6):
-        for col in range(4):
+    for row in range(3, rows):
+        for col in range(cols-3):
             if position[row][col] == position[row-1][col+1] == position[row-2][col+2] == "🔵":
                 score += 10
             elif position[row][col] == position[row-1][col+1] == position[row-2][col+2] == "🔴":
                 score -= 10
 
     # Check for center control
-    if position[5][3] == "🔵":
+    if position[rows-1][cols-4] == "🔵":
         score += 20
-    elif position[5][3] == "🔴":
+    elif position[rows-1][cols-4] == "🔴":
         score -= 20
 
     return score
 
-## EV2 
+## EV2 (Doesn't check the potential winning and the center control)
 def static2(position, player): 
     score = 0
 
