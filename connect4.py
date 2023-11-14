@@ -1,8 +1,11 @@
 import random
 
+##### Methods for implementing Connect Four game #####
+
 print("Welcome to Connect Four")
 print("-----------------------")
 
+# Create Connect 4 board
 possibleLetters = ["A", "B", "C", "D", "E", "F", "G"]
 gameBoard = [
     ["", "", "", "", "", "", ""],
@@ -16,7 +19,7 @@ gameBoard = [
 rows = 6
 cols = 7
 
-def printGameBoard():
+def printGameBoard():   # Display the game
     print("\n     A    B    C    D    E    F    G  ", end="")
     for x in range(rows):
         print("\n   +----+----+----+----+----+----+----+")
@@ -31,7 +34,7 @@ def printGameBoard():
     print("\n   +----+----+----+----+----+----+----+")
 
 
-def modifyArray(position, spacePicked, turn):
+def modifyArray(position, spacePicked, turn):   # Make a move
     position[spacePicked[0]][spacePicked[1]] = turn
 
 
@@ -86,7 +89,7 @@ def checkForWinner(chip):
     return False
 
 
-def coordinateParser(inputString):
+def coordinateParser(inputString): # Check if the picked position is valid letters or not
     coordinate = [None] * 2
     if inputString[0] in possibleLetters:
         coordinate[1] = possibleLetters.index(inputString[0])
@@ -96,14 +99,14 @@ def coordinateParser(inputString):
     return coordinate
 
 
-def isSpaceAvailable(intendedCoordinate):
+def isSpaceAvailable(intendedCoordinate):   # Check if the picked position is empty
     if gameBoard[intendedCoordinate[0]][intendedCoordinate[1]] in ["🔴", "🔵"]:
         return False
     else:
         return True
 
 
-def gravityChecker(intendedCoordinate):
+def gravityChecker(intendedCoordinate):     # Check if the picked position is appropriate
     spaceBelow = [None] * 2
     spaceBelow[0] = intendedCoordinate[0] + 1
     spaceBelow[1] = intendedCoordinate[1]
@@ -143,3 +146,60 @@ while True:
     if winner:
         printGameBoard()
         break
+
+
+##### Methods for MINIMAX ###
+
+def STATIC(position, player): # Static evalation function
+# evaluation function
+    return value
+
+def MOVE_GEN(position, player): # Generate leaf nodes
+    successors = []
+    for row in range(rows):
+        for col in range(cols):
+            coordinate = createSpacePicked(row, col)
+            if isSpaceAvailable(coordinate) and gravityChecker(coordinate):
+                position = modifyArray(position, coordinate, player)
+                successors.append(position)       
+    return successors
+
+def OPPOSITE(player):   # Switch player
+    if player == "max":
+        player = "min"
+    else:
+        player = "max"
+    pass
+
+def DEEP_ENOUGH(position, depth):    # Return true if it reaches to the depth limit
+        return  depth == (depth+depthLimit)  
+
+def MINIMAX_AB(position, depth, player, passThresh, useThresh): # Minimax alpha-beta pruing
+    if DEEP_ENOUGH(position, depth):
+        return value, path
+    
+    value = STATIC(position, player)
+    path = []
+    
+    successors = MOVE_GEN(position, player)
+    
+    if not successors:
+        return value, path
+    
+    for succ in successors:
+        result_succ = MINIMAX_AB(succ, depth + 1, OPPOSITE(player), -passThresh, -useThresh)
+        new_value = -result_succ[0]
+        
+        if new_value > passThresh:
+            passThresh = new_value
+            best_path = [succ] + result_succ[1]
+        
+        if passThresh >= useThresh:
+            return passThresh, best_path
+
+    return passThresh, best_path 
+
+def createSpacePicked(row, col):    # Convert row number and colomn number into board psition  
+    n = possibleLetters[col]
+    spacePicked = [n, int(row)]
+    return spacePicked
