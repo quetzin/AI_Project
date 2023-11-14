@@ -31,8 +31,8 @@ def printGameBoard():
     print("\n   +----+----+----+----+----+----+----+")
 
 
-def modifyArray(spacePicked, turn):
-    gameBoard[spacePicked[0]][spacePicked[1]] = turn
+def modifyArray(position, spacePicked, turn):
+    position[spacePicked[0]][spacePicked[1]] = turn
 
 
 def checkForWinner(chip):
@@ -123,7 +123,7 @@ while True:
             spacePicked = random.choice(possibleLetters) + str(random.randint(0, 5))
             coordinate = coordinateParser(spacePicked)
             if isSpaceAvailable(coordinate) and gravityChecker(coordinate):
-                modifyArray(coordinate, "🔵")
+                modifyArray(gameBoard, coordinate, "🔵")
                 break
         winner = checkForWinner("🔵")
         turnCounter += 1
@@ -135,7 +135,7 @@ while True:
                 "".join(map(str, cpuChoice))
             )
             if isSpaceAvailable(cpuCoordinate) and gravityChecker(cpuCoordinate):
-                modifyArray(cpuCoordinate, "🔴")
+                modifyArray(gameBoard, cpuCoordinate, "🔴")
                 break
         winner = checkForWinner("🔴")
         turnCounter += 1
