@@ -49,16 +49,17 @@ def checkForWinner(chip):
               return True
 
     # Check vertical spaces
-    for x in range(rows):
-        for y in range(cols - 3):
+    for y in range(cols):
+        for x in range(rows - 3):
             if (
                 gameBoard[x][y] == chip
-                and gameBoard[x][y + 1] == chip
-                and gameBoard[x][y + 2] == chip
-                and gameBoard[x][y + 3] == chip
+                and gameBoard[x + 1][y] == chip
+                and gameBoard[x + 2][y] == chip
+                and gameBoard[x + 3][y] == chip
             ):
                 print("\nGame over", chip, "wins! Thank you for playing :)")
                 return True
+
 
     # Check upper right to bottom left diagonal spaces
     for x in range(rows - 3):
