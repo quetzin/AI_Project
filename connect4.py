@@ -1,5 +1,8 @@
 import random
 
+# "🔵" is MAX player
+# "🔴" is MIN player
+
 ##### Methods for implementing Connect Four game #####
 
 print("Welcome to Connect Four")
@@ -36,6 +39,7 @@ def printGameBoard():   # Display the game
 
 def modifyArray(position, spacePicked, turn):   # Make a move
     position[spacePicked[0]][spacePicked[1]] = turn
+    return position
 
 
 def checkForWinner(chip):
@@ -120,25 +124,25 @@ def gravityChecker(intendedCoordinate):     # Check if the picked position is ap
 turnCounter = 0
 while True:
     if turnCounter % 2 == 0:
-        # Player 1 (🔵) turn
+        # MAX (🔵) turn
         printGameBoard()
         while True:
             spacePicked = random.choice(possibleLetters) + str(random.randint(0, 5))
             coordinate = coordinateParser(spacePicked)
             if isSpaceAvailable(coordinate) and gravityChecker(coordinate):
-                modifyArray(gameBoard, coordinate, "🔵")
+                gameBoard = modifyArray(gameBoard, coordinate, "🔵")
                 break
         winner = checkForWinner("🔵")
         turnCounter += 1
     else:
-        # Player 2 (🔴) turn
+        # MIN (🔴) turn
         while True:
             cpuChoice = [random.choice(possibleLetters), random.randint(0, 5)]
             cpuCoordinate = coordinateParser(
                 "".join(map(str, cpuChoice))
             )
             if isSpaceAvailable(cpuCoordinate) and gravityChecker(cpuCoordinate):
-                modifyArray(gameBoard, cpuCoordinate, "🔴")
+                gameBoard = modifyArray(gameBoard, cpuCoordinate, "🔴")
                 break
         winner = checkForWinner("🔴")
         turnCounter += 1
@@ -165,10 +169,10 @@ def MOVE_GEN(position, player): # Generate leaf nodes
     return successors
 
 def OPPOSITE(player):   # Switch player
-    if player == "max":
-        player = "min"
+    if player == "🔵":  # MAX
+        player = "🔴"   # MIN
     else:
-        player = "max"
+        player = "🔵"   
     pass
 
 def DEEP_ENOUGH(position, depth):    # Return true if it reaches to the depth limit
