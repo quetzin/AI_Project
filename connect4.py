@@ -50,15 +50,15 @@ def modifyArray(position, spacePicked, turn):
     return position
 
 ### Check if there are 4 pieces lined up ###
-def checkForWinner(chip): 
+def checkForWinner(position, chip): 
     # Check horizontal spaces
     for y in range(cols - 3):  
         for x in range(rows):
             if (
-                gameBoard[x][y] == chip
-                and gameBoard[x][y + 1] == chip
-                and gameBoard[x][y + 2] == chip
-                and gameBoard[x][y + 3] == chip
+                position[x][y] == chip
+                and position[x][y + 1] == chip
+                and position[x][y + 2] == chip
+                and position[x][y + 3] == chip
             ):
               print("\nGame over", chip, "wins! Thank you for playing :)")
               return True
@@ -67,10 +67,10 @@ def checkForWinner(chip):
     for x in range(rows):
         for y in range(cols - 3):
             if (
-                gameBoard[x][y] == chip
-                and gameBoard[x][y + 1] == chip
-                and gameBoard[x][y + 2] == chip
-                and gameBoard[x][y + 3] == chip
+                position[x][y] == chip
+                and position[x][y + 1] == chip
+                and position[x][y + 2] == chip
+                and position[x][y + 3] == chip
             ):
                 print("\nGame over", chip, "wins! Thank you for playing :)")
                 return True
@@ -79,10 +79,10 @@ def checkForWinner(chip):
     for x in range(rows - 3):
         for y in range(3, cols):
             if (
-                gameBoard[x][y] == chip
-                and gameBoard[x + 1][y - 1] == chip
-                and gameBoard[x + 2][y - 2] == chip
-                and gameBoard[x + 3][y - 3] == chip
+                position[x][y] == chip
+                and position[x + 1][y - 1] == chip
+                and position[x + 2][y - 2] == chip
+                and position[x + 3][y - 3] == chip
             ):
                 print("\nGame over", chip, "wins! Thank you for playing :)")
                 return True
@@ -91,10 +91,10 @@ def checkForWinner(chip):
     for x in range(rows - 3):
         for y in range(cols - 3):
             if (
-                gameBoard[x][y] == chip
-                and gameBoard[x + 1][y + 1] == chip
-                and gameBoard[x + 2][y + 2] == chip
-                and gameBoard[x + 3][y + 3] == chip
+                position[x][y] == chip
+                and position[x + 1][y + 1] == chip
+                and position[x + 2][y + 2] == chip
+                and position[x + 3][y + 3] == chip
             ):
                 print("\nGame over", chip, "wins! Thank you for playing :)")
                 return True
@@ -355,12 +355,14 @@ while True:
         # MAX (🔵) turn
         printGameBoard()
         while True:
+            #value, path = minimax_ab_ev1(gameBoard, turnCounter, "🔵", float('inf'), float('-inf') )
+            #spacePicked = path[0]
             spacePicked = random.choice(possibleLetters) + str(random.randint(0, 5))
             coordinate = coordinateParser(spacePicked)
             if isSpaceAvailable(gameBoard, coordinate) and gravityChecker(gameBoard, coordinate):
                 gameBoard = modifyArray(gameBoard, coordinate, "🔵")
                 break
-        winner = checkForWinner("🔵")
+        winner = checkForWinner(gameBoard, "🔵")
         turnCounter += 1
     else:
         # MIN (🔴) turn
@@ -372,7 +374,7 @@ while True:
             if isSpaceAvailable(gameBoard, cpuCoordinate) and gravityChecker(gameBoard, cpuCoordinate):
                 gameBoard = modifyArray(gameBoard, cpuCoordinate, "🔴")
                 break
-        winner = checkForWinner("🔴")
+        winner = checkForWinner(gameBoard, "🔴")
         turnCounter += 1
 
     if winner:
