@@ -1,17 +1,18 @@
 def STATIC(position, player):
     # evaluation function
-    pass
+    return value
 
 def MOVE_GEN(position, player): 
     successors = []
-    for row in range(6):
-        for col in range(7):
-            if position[row][col] == " ":
-                position = modifyArray(position, createSpacePicked(row, col), player)
+    for row in range(rows):
+        for col in range(cols):
+            coordinate = createSpacePicked(row, col)
+            if isSpaceAvailable(coordinate) and gravityChecker(coordinate):
+                position = modifyArray(position, coordinate, player)
                 successors.append(position)       
     return successors
 
-def OPPOSITE(player): #may need to change depending on the system of the game
+def OPPOSITE(player):
     if player == "max":
         player = "min"
     else:
