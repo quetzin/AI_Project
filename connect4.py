@@ -103,20 +103,20 @@ def coordinateParser(inputString): # Check if the picked position is valid lette
     return coordinate
 
 
-def isSpaceAvailable(intendedCoordinate):   # Check if the picked position is empty
-    if gameBoard[intendedCoordinate[0]][intendedCoordinate[1]] in ["🔴", "🔵"]:
+def isSpaceAvailable(position, intendedCoordinate):   # Check if the picked position is empty
+    if position[intendedCoordinate[0]][intendedCoordinate[1]] in ["🔴", "🔵"]:
         return False
     else:
         return True
 
 
-def gravityChecker(intendedCoordinate):     # Check if the picked position is appropriate
+def gravityChecker(position, intendedCoordinate):     # Check if the picked position is appropriate
     spaceBelow = [None] * 2
     spaceBelow[0] = intendedCoordinate[0] + 1
     spaceBelow[1] = intendedCoordinate[1]
     if spaceBelow[0] == 6:
         return True
-    if isSpaceAvailable(spaceBelow) == False:
+    if isSpaceAvailable(position, spaceBelow) == False:
         return True
     return False
 
@@ -129,7 +129,7 @@ while True:
         while True:
             spacePicked = random.choice(possibleLetters) + str(random.randint(0, 5))
             coordinate = coordinateParser(spacePicked)
-            if isSpaceAvailable(coordinate) and gravityChecker(coordinate):
+            if isSpaceAvailable(gameBoard, coordinate) and gravityChecker(gameBoard, coordinate):
                 gameBoard = modifyArray(gameBoard, coordinate, "🔵")
                 break
         winner = checkForWinner("🔵")
@@ -141,7 +141,7 @@ while True:
             cpuCoordinate = coordinateParser(
                 "".join(map(str, cpuChoice))
             )
-            if isSpaceAvailable(cpuCoordinate) and gravityChecker(cpuCoordinate):
+            if isSpaceAvailable(gameBoard, cpuCoordinate) and gravityChecker(gameBoard, cpuCoordinate):
                 gameBoard = modifyArray(gameBoard, cpuCoordinate, "🔴")
                 break
         winner = checkForWinner("🔴")
@@ -152,43 +152,71 @@ while True:
         break
 
 
-##### Methods for MINIMAX ###
+##### Methods for MINIMAX #####
 
 def STATIC(position, player): # Static evalation function
-# evaluation function
-    return value
+    value = 0
+
+    if(player == "🔵"):
+        # Check for wins
+        if is_winner(board, player):
+            return float('inf')
+        elif is_winner(board, get_opponent(player)):
+            return float('-inf')
+
+        # Evaluate based on connected pieces
+        score += connected_pieces_score(board, player)
+
+        # Evaluate based on blocking opponent's wins
+        score += block_opponent_wins_score(board, player)
+
+        # Evaluate based on center control
+        score += center_control_score(board, player)
+
+        # Add more evaluation criteria as needed
+   # else:
+        #
+   # return value
 
 def MOVE_GEN(position, player): # Generate leaf nodes
     successors = []
     for row in range(rows):
         for col in range(cols):
             coordinate = createSpacePicked(row, col)
-            if isSpaceAvailable(coordinate) and gravityChecker(coordinate):
+            if isSpaceAvailable(position, coordinate) and gravityChecker(position, coordinate):
                 position = modifyArray(position, coordinate, player)
                 successors.append(position)       
     return successors
 
 def OPPOSITE(player):   # Switch player
-    if player == "🔵":  # MAX
-        player = "🔴"   # MIN
+    if player == "🔵":  
+        player = "🔴"   
     else:
         player = "🔵"   
     pass
 
-def DEEP_ENOUGH(position, depth):    # Return true if it reaches to the depth limit
-        return  depth == (depth+depthLimit)  
+def DEEP_ENOUGH(position, depth):    
+    if(depth == turnCounter + depthLimit):   # Return true if it reaches to the depth limit
+        boolean = True
+    elif(depth == 0):   # Return true if it reaches to the root node
+        boolean = True
+    elif(checkForWinner(position, player) or checkForWinner(position, OPPOSITE(player))): # Return true if either player won
+        boolean = True
+    else:   # False otherwise
+        boolean = False
+        
+    return boolean
 
 def MINIMAX_AB(position, depth, player, passThresh, useThresh): # Minimax alpha-beta pruing
     if DEEP_ENOUGH(position, depth):
-        return value, path
-    
-    value = STATIC(position, player)
-    path = []
-    
-    successors = MOVE_GEN(position, player)
+        value = STATIC(position, player)
+        path = []
+    else:
+        successors = MOVE_GEN(position, player)
     
     if not successors:
-        return value, path
+        value = STATIC(position, player)
+        path = []
     
     for succ in successors:
         result_succ = MINIMAX_AB(succ, depth + 1, OPPOSITE(player), -passThresh, -useThresh)
@@ -196,12 +224,13 @@ def MINIMAX_AB(position, depth, player, passThresh, useThresh): # Minimax alpha-
         
         if new_value > passThresh:
             passThresh = new_value
-            best_path = [succ] + result_succ[1]
+            bestPath = [succ] + result_succ[1]
         
         if passThresh >= useThresh:
-            return passThresh, best_path
+            value = passThresh
+            path = [bestPath]
 
-    return passThresh, best_path 
+    return passThresh, bestPath 
 
 def createSpacePicked(row, col):    # Convert row number and colomn number into board psition  
     n = possibleLetters[col]
