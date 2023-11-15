@@ -283,7 +283,6 @@ def static2(position, player):
             (position[row][col] == position[row][col+1] == position[row][col+3] == opponent and position[row][col+2] == player) or 
             (position[row][col] == position[row][col+2] == position[row][col+3] == opponent and position[row][col+1] == player) or 
             (position[row][col+1] == position[row][col+2] == position[row][col+3] == opponent and position[row][col] == player)):
-                print("happend")
                 score += 50
         
     for col in range(cols): # Vertical
@@ -292,7 +291,6 @@ def static2(position, player):
             (position[row][col] == position[row+1][col] == position[row+3][col] == opponent and position[row+2][col] == player) or 
             (position[row][col] == position[row+2][col] == position[row+3][col] == opponent and position[row+1][col] == player) or 
             (position[row+1][col] == position[row+2][col] == position[row+3][col] == opponent and position[row][col] == player)):
-                print("happend")
                 score += 50
 
     for row in range(rows-3):   # Positive diagnal
@@ -301,7 +299,6 @@ def static2(position, player):
             (position[row][col] == position[row+1][col+1] == position[row+3][col+3] == opponent and position[row+2][col+2] == player) or 
             (position[row][col] == position[row+2][col+2] == position[row+3][col+3] == opponent and position[row+1][col+1] == player) or
             (position[row+1][col+1] == position[row+2][col+2] == position[row+3][col+3] == opponent and position[row][col] == player)):
-                print("happend")
                 score += 50
 
     for row in range(3, rows):  # Negative diagnal
@@ -310,7 +307,6 @@ def static2(position, player):
             (position[row][col] == position[row-1][col+1] == position[row-3][col+3] == opponent and position[row-2][col+2] == player) or 
             (position[row][col] == position[row-2][col+2] == position[row-3][col+3] == opponent and position[row-1][col+1] == player) or 
             (position[row-1][col+1] == position[row-2][col-2] == position[row-3][col+3] == opponent and position[row][col] == player)):
-                print("happend")
                 score += 50
 
     if player == "🔴":
@@ -456,7 +452,7 @@ winner = False
 valid = False
 while (not winner):
     valid = False
-    #printGameBoard(gameBoard)
+    printGameBoard(gameBoard)
     if turnCounter % 2 == 0:
         print()
         print("TURN 🔵")
@@ -464,7 +460,7 @@ while (not winner):
         result = minimax_ab_ev1(gameBoard, turnCounter, "🔵", 1000, -1000) # EV1
         #result = minimax_ab_ev2(gameBoard, turnCounter, "🔵", 1000, -1000) # EV2
 
-        ShowValues(result)
+        #ShowValues(result)
         spacePicked = result[1][0]
 
         if spacePicked: # apply the result
@@ -487,7 +483,7 @@ while (not winner):
         #result = minimax_ab_ev1(gameBoard, turnCounter, "🔴", -1000, 1000)  # EV1
         result = minimax_ab_ev2(gameBoard, turnCounter, "🔴", -1000, 1000) # EV2
 
-        ShowValues(result)
+        #ShowValues(result)
 
         spacePicked = result[1][0]
 
@@ -506,10 +502,10 @@ while (not winner):
         turnCounter += 1
 
     if(checkForWinner(gameBoard, "🔵")):
-        #printGameBoard(gameBoard)
+        printGameBoard(gameBoard)
         print("\nGame over 🔵 wins! Thank you for playing :)")
         break
     if(checkForWinner(gameBoard, "🔴")):
-        #printGameBoard(gameBoard)
+        printGameBoard(gameBoard)
         print("\nGame over 🔴 wins! Thank you for playing :)")
         break
