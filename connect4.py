@@ -367,29 +367,24 @@ def deep_enough(position, depth):
 ### Minimax Alpha-Beta Pruing ###
 ## With EV1 
 def minimax_ab_ev1(position, depth, player, useThresh, passThresh):
-    #print()
-    #print("depth ", depth)
-    #print("position now:")
-    #printGameBoard(position)
-    if deep_enough(position, depth):
-        value = static(position, player)
+    
+    if deep_enough(position, depth):    # Check for cut off or terminal node
+        value = static(position, player)     # Evaluation function 
         path = None
+        ShowValues(depth, player, value, path)
         return value, path
         
-    successors = move_gen(position, player)
+    successors = move_gen(position, player) # Generate leaf nodes
     
     if not successors:
-        value = static(position, player)
+        value = static(position, player)     # Evaluation function 
         path = None
+        ShowValues(depth, player, value, path)
         return value, path 
 
     bestPath= None
-    for succ in successors:
+    for succ in successors:  # Call Minimax for each node
         resultSucc = minimax_ab_ev1(succ, depth + 1, opposite(player), -passThresh, -useThresh)
-        #print()
-        #print("backed to depth ", depth)
-        #print("position now:")
-        #printGameBoard(position)
         new_value = -resultSucc[0]
         
         if player == "🔴":  # Revert the function when it's MIN turn
@@ -399,31 +394,49 @@ def minimax_ab_ev1(position, depth, player, useThresh, passThresh):
         else:               # MAX turn
             if new_value > passThresh:
                 passThresh = new_value
-                bestPath = succ 
+                bestPath = [succ] + resultSucc[1] 
         
-        if passThresh >= useThresh:
+        if passThresh >= useThresh:  # Pruning
+            print("pruned")
+            ShowValues(depth, player, passThresh, bestPath)
             return passThresh, bestPath
 
+    ShowValues(depth, player, passThresh, bestPath)
     return passThresh, bestPath
+
+def ShowValues(d, p, val, path):
+    print("********************")
+    print("depth: ", d)
+    print("player: ", p)
+    print("value: ", val)
+    print("path: ")
+    if not path:
+        print(path)
+    else:
+        for p in range(len(path)):
+            print(path[p])
+    pass
 
 ## With EV2 
 def minimax_ab_ev2(position, depth, player, useThresh, passThresh): 
 
-    if deep_enough(position, depth):
-        value = static2(position, player)
+    if deep_enough(position, depth):    # Check for cut off or terminal node
+        value = static2(position, player)     # Evaluation function 
         path = None
+        ShowValues(depth, player, value, path)
         return value, path
         
-    successors = move_gen(position, player)
+    successors = move_gen(position, player) # Generate leaf nodes
     
     if not successors:
-        value = static2(position, player)
+        value = static2(position, player)     # Evaluation function 
         path = None
+        ShowValues(depth, player, value, path)
         return value, path 
 
     bestPath= None
-    for succ in successors:
-        resultSucc = minimax_ab_ev2(succ, depth + 1, opposite(player), -passThresh, -useThresh)
+    for succ in successors:  # Call Minimax for each node
+        resultSucc = minimax_ab_ev1(succ, depth + 1, opposite(player), -passThresh, -useThresh)
         new_value = -resultSucc[0]
         
         if player == "🔴":  # Revert the function when it's MIN turn
@@ -433,11 +446,14 @@ def minimax_ab_ev2(position, depth, player, useThresh, passThresh):
         else:               # MAX turn
             if new_value > passThresh:
                 passThresh = new_value
-                bestPath = succ 
+                bestPath = [succ] + resultSucc[1] 
         
-        if passThresh >= useThresh:
+        if passThresh >= useThresh:  # Pruning
+            print("pruned")
+            ShowValues(depth, player, passThresh, bestPath)
             return passThresh, bestPath
 
+    ShowValues(depth, player, passThresh, bestPath)
     return passThresh, bestPath
 
 ############ Connect 4 ############
@@ -445,7 +461,7 @@ winner = False
 valid = False
 while (not winner):
     valid = False
-    printGameBoard(gameBoard)
+    #printGameBoard(gameBoard)
     if turnCounter % 2 == 0:
         print()
         print("TURN 🔵")
@@ -453,13 +469,11 @@ while (not winner):
         result = minimax_ab_ev1(gameBoard, turnCounter, "🔵", 1000, -1000) # EV1
         #result = minimax_ab_ev2(gameBoard, turnCounter, "🔵", 1000, -1000) # EV2
 
-        print(result[0])
-        print(result[1])
-        spacePicked = result[1]
+        spacePicked = result[1][0]
 
         if spacePicked: # apply the result
             gameBoard = spacePicked
-        else:   # Pick a random position when the path is empty
+        else:   # Pick a random position in case the path is empty
             while(not valid):
                 spacePicked = random.choice(possibleLetters) + str(random.randint(0, 5))
                 coordinate = coordinateParser(spacePicked)
@@ -476,13 +490,12 @@ while (not winner):
 
         #result = minimax_ab_ev1(gameBoard, turnCounter, "🔴", -1000, 1000)  # EV1
         result = minimax_ab_ev2(gameBoard, turnCounter, "🔴", -1000, 1000) # EV2
-        print(result[0])
-        print(result[1])
+       
         spacePicked = result[1]
 
         if spacePicked: # apply the result
             gameBoard = spacePicked
-        else:   # Pick a random position when the path is empty
+        else:   # Pick a random position in case the path is empty
             while(not valid):
                 spacePicked = random.choice(possibleLetters) + str(random.randint(0, 5))
                 coordinate = coordinateParser(spacePicked)
@@ -497,11 +510,11 @@ while (not winner):
     #printGameBoard(gameBoard)
 
     if(checkForWinner(gameBoard, "🔵")):
-        printGameBoard(gameBoard)
+        #printGameBoard(gameBoard)
         print("\nGame over 🔵 wins! Thank you for playing :)")
         break;
     if(checkForWinner(gameBoard, "🔴")):
-        printGameBoard(gameBoard)
+        #printGameBoard(gameBoard)
         print("\nGame over 🔴 wins! Thank you for playing :)")
         break;
 
