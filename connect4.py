@@ -491,7 +491,7 @@ while (not winner):
         #result = minimax_ab_ev1(gameBoard, turnCounter, "🔴", -1000, 1000)  # EV1
         result = minimax_ab_ev2(gameBoard, turnCounter, "🔴", -1000, 1000) # EV2
        
-        spacePicked = result[1]
+        spacePicked = result[1][0]
 
         if spacePicked: # apply the result
             gameBoard = spacePicked
