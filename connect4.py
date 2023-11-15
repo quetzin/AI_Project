@@ -5,9 +5,9 @@ import copy
 #depthLimit1 = 4
 depthLimit1 = 8
 
-depthLimit2 = 2
+#depthLimit2 = 2
 #depthLimit2 = 4
-#depthLimit2 = 8
+depthLimit2 = 8
 
 turnCounter = 0
 # "🔵" is MAX player
@@ -140,120 +140,186 @@ def gravityChecker(position, intendedCoordinate):
 ############ Methods for minimax ############
 
 ### Static evaluation funtions ###
-## EV1 
+## EV1 (preventing opponets' win)
 def static(position, player):
     score = 0
+    opponent = opposite(player)
 
-    # Check rows for winning positions
-    for row in range(rows):
+    # Check for winning positions
+    for row in range(rows): # Horizontal
         for col in range(cols-3):
-            if position[row][col] == position[row][col+1] == position[row][col+2] == position[row][col+3]:
-                if position[row][col] == "🔵":
-                    score += 100
-                elif position[row][col] == "🔴":
-                    score -= 100
+            if position[row][col] == position[row][col+1] == position[row][col+2] == position[row][col+3] == player:
+                score += 100
 
-    # Check columns for winning positions
-    for col in range(cols):
+    for col in range(cols): # Vertical
         for row in range(row-3):
-            if position[row][col] == position[row+1][col] == position[row+2][col] == position[row+3][col]:
-                if position[row][col] == "🔵":
-                    score += 100
-                elif position[row][col] == "🔴":
-                    score -= 100
+            if position[row][col] == position[row+1][col] == position[row+2][col] == position[row+3][col] == player:
+                score += 100
 
-    # Check diagonals for winning positions
-    for row in range(rows-3):
+    for row in range(rows-3):   # Positive diagnal
         for col in range(cols-3):
-            if position[row][col] == position[row+1][col+1] == position[row+2][col+2] == position[row+3][col+3]:
-                if position[row][col] == "🔵":
-                    score += 100
-                elif position[row][col] == "🔴":
-                    score -= 100
+            if position[row][col] == position[row+1][col+1] == position[row+2][col+2] == position[row+3][col+3] == player:
+                score += 100
 
-    for row in range(3, rows):
+    for row in range(3, rows):  # Negative diagnal
         for col in range(cols-3):
-            if position[row][col] == position[row-1][col+1] == position[row-2][col+2] == position[row-3][col+3]:
-                if position[row][col] == "🔵":
-                    score += 100
-                elif position[row][col] == "🔴":
-                    score -= 100
+            if position[row][col] == position[row-1][col+1] == position[row-2][col+2] == position[row-3][col+3] == player:
+                score += 100
 
     # Check for potential winning positions
-    for row in range(rows):
+    for row in range(rows): # Horizontal
         for col in range(cols-3):
-            if position[row][col] == position[row][col+1] == position[row][col+2] == "🔵":
-                score += 10
-            elif position[row][col] == position[row][col+1] == position[row][col+2] == "🔴":
-                score -= 10
-
-    for col in range(cols):
+            if position[row][col] == position[row][col+1] == position[row][col+2] == player:
+                score += 50
+        
+    for col in range(cols): # Vertical
         for row in range(rows-3):
-            if position[row][col] == position[row+1][col] == position[row+2][col] == "🔵":
-                score += 10
-            elif position[row][col] == position[row+1][col] == position[row+2][col] == "🔴":
-                score -= 10
+            if position[row][col] == position[row+1][col] == position[row+2][col] == player:
+                score += 50
 
-    for row in range(rows-3):
+    for row in range(rows-3):   # Positive diagnal
         for col in range(cols-3):
-            if position[row][col] == position[row+1][col+1] == position[row+2][col+2] == "🔵":
-                score += 10
-            elif position[row][col] == position[row+1][col+1] == position[row+2][col+2] == "🔴":
-                score -= 10
+            if position[row][col] == position[row+1][col+1] == position[row+2][col+2] == player:
+                score += 50
 
-    for row in range(3, rows):
+    for row in range(3, rows):  # Negative diagnal
         for col in range(cols-3):
-            if position[row][col] == position[row-1][col+1] == position[row-2][col+2] == "🔵":
-                score += 10
-            elif position[row][col] == position[row-1][col+1] == position[row-2][col+2] == "🔴":
-                score -= 10
+            if position[row][col] == position[row-1][col+1] == position[row-2][col+2] == player:
+                score += 50
+    
+     # Check for preventing oppoenet's potential winning positions
+    for row in range(rows): # Horizontal
+        for col in range(cols-3):
+            if((position[row][col] == position[row][col+1] == position[row][col+2] == opponent and position[row][col+3] == player) or 
+            (position[row][col] == position[row][col+1] == position[row][col+3] == opponent and position[row][col+2] == player) or 
+            (position[row][col] == position[row][col+2] == position[row][col+3] == opponent and position[row][col+1] == player) or 
+            (position[row][col+1] == position[row][col+2] == position[row][col+3] == opponent and position[row][col] == player)):
+                score += 90
+        
+    for col in range(cols): # Vertical
+        for row in range(rows-3):
+            if((position[row][col] == position[row+1][col] == position[row+2][col] == opponent and position[row+3][col] == player) or 
+            (position[row][col] == position[row+1][col] == position[row+3][col] == opponent and position[row+2][col] == player) or 
+            (position[row][col] == position[row+2][col] == position[row+3][col] == opponent and position[row+1][col] == player) or 
+            (position[row+1][col] == position[row+2][col] == position[row+3][col] == opponent and position[row][col] == player)):
+                score += 90
+
+    for row in range(rows-3):   # Positive diagnal
+        for col in range(cols-3):
+            if((position[row][col] == position[row+1][col+1] == position[row+2][col+2] == opponent and position[row+3][col+3] == player) or 
+            (position[row][col] == position[row+1][col+1] == position[row+3][col+3] == opponent and position[row+2][col+2] == player) or 
+            (position[row][col] == position[row+2][col+2] == position[row+3][col+3] == opponent and position[row+1][col+1] == player) or
+            (position[row+1][col+1] == position[row+2][col+2] == position[row+3][col+3] == opponent and position[row][col] == player)):
+                score += 90
+
+    for row in range(3, rows):  # Negative diagnal
+        for col in range(cols-3):
+            if((position[row][col] == position[row-1][col+1] == position[row-2][col+2] == opponent and position[row-3][col+3] == player) or 
+            (position[row][col] == position[row-1][col+1] == position[row-3][col+3] == opponent and position[row-2][col+2] == player) or 
+            (position[row][col] == position[row-2][col+2] == position[row-3][col+3] == opponent and position[row-1][col+1] == player) or 
+            (position[row-1][col+1] == position[row-2][col-2] == position[row-3][col+3] == opponent and position[row][col] == player)):
+                score += 90
 
     # Check for center control
-    if position[rows-1][cols-4] == "🔵":
+    if position[rows-1][cols-4] == player:
         score += 20
-    elif position[rows-1][cols-4] == "🔴":
-        score -= 20
+
+    if player == "🔴":
+        score = -score
 
     return score
 
-## EV2 (Doesn't check the potential winning and the center control)
+## EV2 (preventing opponent is less important here)
 def static2(position, player): 
     score = 0
+    opponent = opposite(player)
 
-    # Check rows for winning positions
-    for row in range(rows):
+    # Check for winning positions
+    for row in range(rows): # Horizontal
         for col in range(cols-3):
-            if position[row][col] == position[row][col+1] == position[row][col+2] == position[row][col+3]:
-                if position[row][col] == "🔵":
-                    score += 100
-                elif position[row][col] == "🔴":
-                    score -= 100
+            if position[row][col] == position[row][col+1] == position[row][col+2] == position[row][col+3] == player:
+                score += 100
 
-    # Check columns for winning positions
-    for col in range(cols):
+    for col in range(cols): # Vertical
         for row in range(row-3):
-            if position[row][col] == position[row+1][col] == position[row+2][col] == position[row+3][col]:
-                if position[row][col] == "🔵":
-                    score += 100
-                elif position[row][col] == "🔴":
-                    score -= 100
+            if position[row][col] == position[row+1][col] == position[row+2][col] == position[row+3][col] == player:
+                score += 100
 
-    # Check diagonals for winning positions
-    for row in range(rows-3):
+    for row in range(rows-3):   # Positive diagnal
         for col in range(cols-3):
-            if position[row][col] == position[row+1][col+1] == position[row+2][col+2] == position[row+3][col+3]:
-                if position[row][col] == "🔵":
-                    score += 100
-                elif position[row][col] == "🔴":
-                    score -= 100
+            if position[row][col] == position[row+1][col+1] == position[row+2][col+2] == position[row+3][col+3] == player:
+                score += 100
 
-    for row in range(3, rows):
+    for row in range(3, rows):  # Negative diagnal
         for col in range(cols-3):
-            if position[row][col] == position[row-1][col+1] == position[row-2][col+2] == position[row-3][col+3]:
-                if position[row][col] == "🔵":
-                    score += 100
-                elif position[row][col] == "🔴":
-                    score -= 100
+            if position[row][col] == position[row-1][col+1] == position[row-2][col+2] == position[row-3][col+3] == player:
+                score += 100
+
+    # Check for potential winning positions
+    for row in range(rows): # Horizontal
+        for col in range(cols-3):
+            if position[row][col] == position[row][col+1] == position[row][col+2] == player:
+                score += 80
+        
+    for col in range(cols): # Vertical
+        for row in range(rows-3):
+            if position[row][col] == position[row+1][col] == position[row+2][col] == player:
+                score += 80
+
+    for row in range(rows-3):   # Positive diagnal
+        for col in range(cols-3):
+            if position[row][col] == position[row+1][col+1] == position[row+2][col+2] == player:
+                score += 80
+
+    for row in range(3, rows):  # Negative diagnal
+        for col in range(cols-3):
+            if position[row][col] == position[row-1][col+1] == position[row-2][col+2] == player:
+                score += 80
+    
+     # Check for preventing oppoenet's potential winning positions
+    for row in range(rows): # Horizontal
+        for col in range(cols-3):
+            if((position[row][col] == position[row][col+1] == position[row][col+2] == opponent and position[row][col+3] == player) or 
+            (position[row][col] == position[row][col+1] == position[row][col+3] == opponent and position[row][col+2] == player) or 
+            (position[row][col] == position[row][col+2] == position[row][col+3] == opponent and position[row][col+1] == player) or 
+            (position[row][col+1] == position[row][col+2] == position[row][col+3] == opponent and position[row][col] == player)):
+                print("happend")
+                score += 50
+        
+    for col in range(cols): # Vertical
+        for row in range(rows-3):
+            if((position[row][col] == position[row+1][col] == position[row+2][col] == opponent and position[row+3][col] == player) or 
+            (position[row][col] == position[row+1][col] == position[row+3][col] == opponent and position[row+2][col] == player) or 
+            (position[row][col] == position[row+2][col] == position[row+3][col] == opponent and position[row+1][col] == player) or 
+            (position[row+1][col] == position[row+2][col] == position[row+3][col] == opponent and position[row][col] == player)):
+                print("happend")
+                score += 50
+
+    for row in range(rows-3):   # Positive diagnal
+        for col in range(cols-3):
+            if((position[row][col] == position[row+1][col+1] == position[row+2][col+2] == opponent and position[row+3][col+3] == player) or 
+            (position[row][col] == position[row+1][col+1] == position[row+3][col+3] == opponent and position[row+2][col+2] == player) or 
+            (position[row][col] == position[row+2][col+2] == position[row+3][col+3] == opponent and position[row+1][col+1] == player) or
+            (position[row+1][col+1] == position[row+2][col+2] == position[row+3][col+3] == opponent and position[row][col] == player)):
+                print("happend")
+                score += 50
+
+    for row in range(3, rows):  # Negative diagnal
+        for col in range(cols-3):
+            if((position[row][col] == position[row-1][col+1] == position[row-2][col+2] == opponent and position[row-3][col+3] == player) or 
+            (position[row][col] == position[row-1][col+1] == position[row-3][col+3] == opponent and position[row-2][col+2] == player) or 
+            (position[row][col] == position[row-2][col+2] == position[row-3][col+3] == opponent and position[row-1][col+1] == player) or 
+            (position[row-1][col+1] == position[row-2][col-2] == position[row-3][col+3] == opponent and position[row][col] == player)):
+                print("happend")
+                score += 50
+
+    # Check for center control
+    if position[rows-1][cols-4] == player:
+        score += 70
+
+    if player == "🔴":
+        score = -score
+
     return score
 
 ### Convert row number and colomn number into board position  ###
@@ -264,18 +330,13 @@ def createSpacePicked(row, col):
 
 ### Generate leaf nodes ###
 def move_gen(position, player): 
-    #print("in move_gem")
     successors = []
     new_position = copy.deepcopy(position)
-    #print("check initial position")
-    #printGameBoard(new_position)
     for row in range(rows):
         for col in range(cols):
             coordinate = coordinateParser(createSpacePicked(row, col))
             if isSpaceAvailable(new_position, coordinate) and gravityChecker(new_position, coordinate):
                 new_position = modifyArray(new_position, coordinate, player)
-                #print("check new position")
-                #printGameBoard(new_position)
                 successors.append(new_position)
                 new_position = copy.deepcopy(position)
     #print(successors)                 
@@ -283,153 +344,157 @@ def move_gen(position, player):
 
 ### Switch player ###
 def opposite(player):   
+
     if player == "🔵":  
-        player = "🔴"   
+        return("🔴")  
     else:
-        player = "🔵"   
-    return player
+        return("🔵")   
 
 ### Check if it reaches to the certain conditions ###
 def deep_enough(position, depth):   
 
-    if(depth == turnCounter + depthLimit1):   # Return true if it reaches to the depth limit
-        boolean = True
-    elif(checkForWinner(position, "🔵") or checkForWinner(position, "🔴")): # Return true if either player won
-        boolean = True
+    if turnCounter % 2 == 0:    # Return true if it reaches to the depth limit for MAX player
+        if depth == turnCounter + depthLimit1:   
+            return True
+        else:
+            return False
+    elif turnCounter+2 % 2 == 1:  # Return true if it reaches to the depth limit for MIN player
+        if depth == turnCounter + depthLimit2:  
+            return True
+        else:
+            return False
+    elif checkForWinner(position, "🔵") or checkForWinner(position, "🔴"): # Return true if either player won
+        return True
     else:   # False otherwise
-        boolean = False
-    
-        
-    return boolean
+        return False
 
 ### Minimax Alpha-Beta Pruing ###
 ## With EV1 
-def minimax_ab_ev1(position, depth, player, passThresh, useThresh, count):
-    #print("in minimax_ab") 
-    #print("depth ", count)
-    #print("turn ", player)
+def minimax_ab_ev1(position, depth, player, useThresh, passThresh):
+    #print()
+    #print("depth ", depth)
+    #print("position now:")
+    #printGameBoard(position)
     if deep_enough(position, depth):
-        #print("it is deep enough")
         value = static(position, player)
-        path = []
-        #print("depth ", count)
-        #print("value returned: ", value)
-        #print("path returned: ", path)
+        path = None
         return value, path
         
-    #print("generate successors")
     successors = move_gen(position, player)
     
     if not successors:
-        #print("successors is empty")
         value = static(position, player)
-        path = []
-        #print("depth ", count)
-        #print("value returned: ", value)
-        #print("path returned: ", path)
+        path = None
         return value, path 
 
-    bestPath= []
+    bestPath= None
     for succ in successors:
-        #print("in for loop")
-        resultSucc = minimax_ab_ev1(succ, depth + 1, opposite(player), -passThresh, -useThresh, count+1)
+        resultSucc = minimax_ab_ev1(succ, depth + 1, opposite(player), -passThresh, -useThresh)
+        #print()
+        #print("backed to depth ", depth)
+        #print("position now:")
+        #printGameBoard(position)
         new_value = -resultSucc[0]
         
-        if new_value > passThresh:
+        if player == "🔴":  # Revert the function when it's MIN turn
+            new_value < passThresh
             passThresh = new_value
-            bestPath = [succ] + resultSucc[1]
+            bestPath = succ
+        else:               # MAX turn
+            if new_value > passThresh:
+                passThresh = new_value
+                bestPath = succ 
         
         if passThresh >= useThresh:
-            #print("depth ", count)
-            #print("value returned: ", passThresh)
-            #print("path returned: ")
-            #printGameBoard(position)
             return passThresh, bestPath
 
-    #print("depth ", count)
-    #print("value returned: ", passThresh)
-    #print("path returned: ")
-    #printGameBoard(position)
     return passThresh, bestPath
 
 ## With EV2 
-def minimax_ab_ev2(position, depth, player, passThresh, useThresh, count): 
-    #print("in minimax_ab") 
-    #print("depth ", count)
-    #print("turn ", player)
+def minimax_ab_ev2(position, depth, player, useThresh, passThresh): 
+
     if deep_enough(position, depth):
-        #print("it is deep enough")
         value = static2(position, player)
-        path = []
-        #print("depth ", count)
-        #print("value returned: ", value)
-        #print("path returned: ", path)
+        path = None
         return value, path
         
-    #print("generate successors")
     successors = move_gen(position, player)
     
     if not successors:
-        #print("successors is empty")
         value = static2(position, player)
-        path = []
-        #print("depth ", count)
-        #print("value returned: ", value)
-        #print("path returned: ", path)
+        path = None
         return value, path 
 
-    bestPath= []
+    bestPath= None
     for succ in successors:
-        #print("in for loop")
-        resultSucc = minimax_ab_ev2(succ, depth + 1, opposite(player), -passThresh, -useThresh, count+1)
+        resultSucc = minimax_ab_ev2(succ, depth + 1, opposite(player), -passThresh, -useThresh)
         new_value = -resultSucc[0]
         
-        if new_value > passThresh:
+        if player == "🔴":  # Revert the function when it's MIN turn
+            new_value < passThresh
             passThresh = new_value
-            bestPath = [succ] + resultSucc[1]
+            bestPath = succ
+        else:               # MAX turn
+            if new_value > passThresh:
+                passThresh = new_value
+                bestPath = succ 
         
         if passThresh >= useThresh:
-            #print("depth ", count)
-            #print("value returned: ", passThresh)
-            #print("path returned: ")
-            #printGameBoard(position)
             return passThresh, bestPath
 
-    #print("depth ", count)
-    #print("value returned: ", passThresh)
-    #print("path returned: ")
-    #printGameBoard(position)
     return passThresh, bestPath
 
 ############ Connect 4 ############
-while True:
+winner = False
+valid = False
+while (not winner):
+    valid = False
+    printGameBoard(gameBoard)
     if turnCounter % 2 == 0:
-        # MAX (🔵) turn
-        printGameBoard(gameBoard)
-        while True:
-            #print("ACTUAL TURN 🔵")
-            result = minimax_ab_ev1(gameBoard, turnCounter, "🔵", 100, -100,0 )
-            #print(result[1])
-            spacePicked = result[1]
-            if not spacePicked: # Pick a random position when the path is empty
+        print()
+        print("TURN 🔵")
+
+        result = minimax_ab_ev1(gameBoard, turnCounter, "🔵", 1000, -1000) # EV1
+        #result = minimax_ab_ev2(gameBoard, turnCounter, "🔵", 1000, -1000) # EV2
+
+        print(result[0])
+        print(result[1])
+        spacePicked = result[1]
+
+        if spacePicked: # apply the result
+            gameBoard = spacePicked
+        else:   # Pick a random position when the path is empty
+            while(not valid):
                 spacePicked = random.choice(possibleLetters) + str(random.randint(0, 5))
-            coordinate = coordinateParser(spacePicked)
-            if isSpaceAvailable(gameBoard, coordinate) and gravityChecker(gameBoard, coordinate):
-                gameBoard = modifyArray(gameBoard, coordinate, "🔵")
-                break
+                coordinate = coordinateParser(spacePicked)
+                if isSpaceAvailable(gameBoard, coordinate) and gravityChecker(gameBoard, coordinate):
+                    gameBoard = modifyArray(gameBoard, coordinate, "🔵")
+                    valid = True
+                    break
+    
         winner = checkForWinner(gameBoard, "🔵")
         turnCounter += 1
     else:
-        # MIN (🔴) turn
-        while True:
-            #print("ACTUAL TURN 🔴")
-            cpuChoice = [random.choice(possibleLetters), random.randint(0, 5)]
-            cpuCoordinate = coordinateParser(
-                "".join(map(str, cpuChoice))
-            )
-            if isSpaceAvailable(gameBoard, cpuCoordinate) and gravityChecker(gameBoard, cpuCoordinate):
-                gameBoard = modifyArray(gameBoard, cpuCoordinate, "🔴")
-                break
+        print()
+        print("TURN 🔴")
+
+        #result = minimax_ab_ev1(gameBoard, turnCounter, "🔴", -1000, 1000)  # EV1
+        result = minimax_ab_ev2(gameBoard, turnCounter, "🔴", -1000, 1000) # EV2
+        print(result[0])
+        print(result[1])
+        spacePicked = result[1]
+
+        if spacePicked: # apply the result
+            gameBoard = spacePicked
+        else:   # Pick a random position when the path is empty
+            while(not valid):
+                spacePicked = random.choice(possibleLetters) + str(random.randint(0, 5))
+                coordinate = coordinateParser(spacePicked)
+                if isSpaceAvailable(gameBoard, coordinate) and gravityChecker(gameBoard, coordinate):
+                    gameBoard = modifyArray(gameBoard, coordinate, "🔴")
+                    valid = True
+                    break
+        
         winner = checkForWinner(gameBoard, "🔴")
         turnCounter += 1
 
