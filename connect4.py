@@ -304,7 +304,7 @@ def minimax_ab_ev1(position, depth, player, passThresh, useThresh, count):
     #print("turn ", player)
     if deep_enough(position, depth):
         #print("it is deep enough")
-        value = static2(position, player)
+        value = static(position, player)
         path = []
         #print("depth ", count)
         #print("value returned: ", value)
@@ -316,7 +316,7 @@ def minimax_ab_ev1(position, depth, player, passThresh, useThresh, count):
     
     if not successors:
         #print("successors is empty")
-        value = static2(position, player)
+        value = static(position, player)
         path = []
         #print("depth ", count)
         #print("value returned: ", value)
@@ -383,7 +383,7 @@ while True:
         # MAX (🔵) turn
         printGameBoard(gameBoard)
         while True:
-            print("ACTUAL TURN 🔵")
+            #print("ACTUAL TURN 🔵")
             result = minimax_ab_ev1(gameBoard, turnCounter, "🔵", 100, -100,0 )
             #print(result[1])
             spacePicked = result[1]
@@ -398,7 +398,7 @@ while True:
     else:
         # MIN (🔴) turn
         while True:
-            print("ACTUAL TURN 🔴")
+            #print("ACTUAL TURN 🔴")
             cpuChoice = [random.choice(possibleLetters), random.randint(0, 5)]
             cpuCoordinate = coordinateParser(
                 "".join(map(str, cpuChoice))
