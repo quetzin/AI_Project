@@ -1,13 +1,13 @@
 import random
 import copy
 
-#depthLimit1 = 2
+depthLimit1 = 2
 #depthLimit1 = 4
-depthLimit1 = 8
+#depthLimit1 = 8
 
-#depthLimit2 = 2
+depthLimit2 = 2
 #depthLimit2 = 4
-depthLimit2 = 8
+#depthLimit2 = 8
 
 turnCounter = 0
 # "🔵" is MAX player
@@ -229,7 +229,7 @@ def static(position, player):
 
     return score
 
-## EV2 (preventing opponent is less important here)
+## EV2 (preventing opponent is less important here, and no center controll)
 def static2(position, player): 
     score = 0
     opponent = opposite(player)
@@ -312,10 +312,6 @@ def static2(position, player):
             (position[row-1][col+1] == position[row-2][col-2] == position[row-3][col+3] == opponent and position[row][col] == player)):
                 print("happend")
                 score += 50
-
-    # Check for center control
-    if position[rows-1][cols-4] == player:
-        score += 70
 
     if player == "🔴":
         score = -score
