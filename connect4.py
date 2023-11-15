@@ -1,9 +1,14 @@
 import random
 import copy
 
-depthLimit1 = 2
-depthLimit2 = 4
-depthLimit3 = 8
+#depthLimit1 = 2
+#depthLimit1 = 4
+depthLimit1 = 8
+
+depthLimit2 = 2
+#depthLimit2 = 4
+#depthLimit2 = 8
+
 turnCounter = 0
 # "🔵" is MAX player
 # "🔴" is MIN player
@@ -347,35 +352,53 @@ def minimax_ab_ev1(position, depth, player, passThresh, useThresh, count):
     return passThresh, bestPath
 
 ## With EV2 
-def minimax_ab_ev2(position, depth, player, passThresh, useThresh): 
+def minimax_ab_ev2(position, depth, player, passThresh, useThresh, count): 
+    #print("in minimax_ab") 
+    #print("depth ", count)
+    #print("turn ", player)
     if deep_enough(position, depth):
+        #print("it is deep enough")
         value = static2(position, player)
         path = []
+        #print("depth ", count)
+        #print("value returned: ", value)
+        #print("path returned: ", path)
         return value, path
         
-    else:
-        successors = move_gen(position, player)
+    #print("generate successors")
+    successors = move_gen(position, player)
     
     if not successors:
+        #print("successors is empty")
         value = static2(position, player)
         path = []
-        return value, path
+        #print("depth ", count)
+        #print("value returned: ", value)
+        #print("path returned: ", path)
+        return value, path 
 
-    else:
-        for succ in successors:
-            result_succ, bestPath = minimax_ab_ev2(succ, depth + 1, opposite(player), -passThresh, -useThresh)
-            new_value = -result_succ
-            
-            if new_value > passThresh:
-                passThresh = new_value
-                bestPath = [succ] + result_succ
-            
-            if passThresh >= useThresh:
-                value = passThresh
-                path = [bestPath]
+    bestPath= []
+    for succ in successors:
+        #print("in for loop")
+        resultSucc = minimax_ab_ev2(succ, depth + 1, opposite(player), -passThresh, -useThresh, count+1)
+        new_value = -resultSucc[0]
+        
+        if new_value > passThresh:
+            passThresh = new_value
+            bestPath = [succ] + resultSucc[1]
+        
+        if passThresh >= useThresh:
+            #print("depth ", count)
+            #print("value returned: ", passThresh)
+            #print("path returned: ")
+            #printGameBoard(position)
+            return passThresh, bestPath
 
-    return passThresh, bestPath  
-
+    #print("depth ", count)
+    #print("value returned: ", passThresh)
+    #print("path returned: ")
+    #printGameBoard(position)
+    return passThresh, bestPath
 
 ############ Connect 4 ############
 while True:
@@ -387,7 +410,7 @@ while True:
             result = minimax_ab_ev1(gameBoard, turnCounter, "🔵", 100, -100,0 )
             #print(result[1])
             spacePicked = result[1]
-            if not spacePicked: # Pick random position when the path is empty
+            if not spacePicked: # Pick a random position when the path is empty
                 spacePicked = random.choice(possibleLetters) + str(random.randint(0, 5))
             coordinate = coordinateParser(spacePicked)
             if isSpaceAvailable(gameBoard, coordinate) and gravityChecker(gameBoard, coordinate):
